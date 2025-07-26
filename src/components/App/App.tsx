@@ -1,11 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ErrorMessage from "../ErrorMessage/ErrorMessage"
 import Loader from "../Loader/Loader"
 import MovieGrid from "../MovieGrid/MovieGrid"
 import MovieModal from "../MovieModal/MovieModal"
 import SearchBar from "../SearchBar/SearchBar"
 import css from "./App.module.css"
-import { Toaster } from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 import { type Movie } from "../../types/movie"
 import { fetchMovies } from "../../services/movieService"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
@@ -29,6 +29,7 @@ export default function App() {
 		data: movies,
 		isLoading,
 		isError,
+		isSuccess,
 	} = useQuery({
 		queryKey: ["movies", currentQuery, page],
 		queryFn: async () => fetchMovies(currentQuery, page),
@@ -43,11 +44,17 @@ export default function App() {
 		setPage(1)
 	}
 
+	useEffect(() => {
+		if (movies?.results.length == 0) {
+			toast.error("No movies found for your request.")
+		}
+	}, [movies])
+
 	return (
 		<div className={css.app}>
 			<Toaster />
 			<SearchBar onSubmit={searchSubmit} />
-			{totalPages > 1 && (
+			{isSuccess && totalPages > 1 && (
 				<ReactPaginate
 					pageCount={totalPages}
 					pageRangeDisplayed={5}

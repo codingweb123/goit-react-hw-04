@@ -1,7 +1,5 @@
 import css from "./MovieGrid.module.css"
 import { type Movie } from "../../types/movie"
-import toast from "react-hot-toast"
-import { useEffect } from "react"
 
 interface MovieGridProps {
 	onSelect: (movie: Movie) => void
@@ -12,12 +10,6 @@ export default function MovieGrid({ onSelect, movies }: MovieGridProps) {
 	const selectMovie = (index: number) => {
 		onSelect(movies[index])
 	}
-
-	useEffect(() => {
-		if (movies.length == 0) {
-			toast.error("No movies found for your request.")
-		}
-	}, [movies])
 
 	return (
 		<ul className={css.grid}>
